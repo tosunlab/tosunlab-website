@@ -1,6 +1,6 @@
 services:
   website:
-    image: ghcr.io/tosunlab/tosunlab-website:1.0.0
+    image: ghcr.io/tosunlab/tosunlab-website:1.0.1
     restart: unless-stopped
     ports:
       - "8080:8080"
