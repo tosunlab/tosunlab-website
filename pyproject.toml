@@ -1,0 +1,25 @@
+[project]
+name = "tosunlab-website"
+version = "0.2.0"
+description = "The tosunlab website: one Flask-rendered page."
+requires-python = ">=3.12"
+dependencies = [
+    "flask>=3.1",
+    "gunicorn>=23",
+    "markdown>=3.7",
+    "pyyaml>=6",
+    "requests>=2.32",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "ruff>=0.9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
