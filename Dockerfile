@@ -1,11 +1,12 @@
-FROM node:16.20-alpine AS build
+FROM python:3.13-slim
+COPY --from=ghcr.io/astral-sh/uv:0.9 /uv /bin/uv
 WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile --non-interactive
-COPY . .
-RUN yarn build
-
-FROM nginxinc/nginx-unprivileged:1.27-alpine
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_NO_DEV=1
+COPY pyproject.toml uv.lock ./
+RUN uv sync --locked --no-install-project
+COPY app ./app
+COPY content ./content
+RUN useradd --system --uid 1000 web
+USER web
 EXPOSE 8080
+CMD ["/app/.venv/bin/gunicorn", "--bind", "0.0.0.0:8080", "--workers", "2", "app:create_app()"]

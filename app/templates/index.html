@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ org }} — an open-source software lab</title>
+<meta name="description" content="{{ org }} is an open-source software lab. Maintainers of {{ cards | map(attribute='project.name') | join(', ') }}.">
+<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script>
+  try {
+    var saved = localStorage.getItem('tosunlab-site-dark');
+    if (saved !== null) document.documentElement.dataset.theme = saved === '1' ? 'dark' : 'light';
+  } catch (e) {}
+</script>
+</head>
+<body>
+<main class="page">
+  <header class="masthead">
+    <div>
+      <h1>{{ org }}</h1>
+      <div class="subtitle">an open-source software lab</div>
+    </div>
+    <button type="button" class="bevel bevel-small" id="theme-toggle" hidden>[ dark mode ]</button>
+  </header>
+  <nav class="nav">[ <a href="#p">projects</a> | <a href="#a">what's new</a> | <a href="#t">people</a> | <a href="#s">support</a> | <a href="{{ org_url }}">github</a> ]</nav>
+  <hr class="first">
+
+  <p class="headline"><b>We turn the products you use daily into super tools to enhance our workflows in the new agentic era.</b></p>
+  <p class="intro">We write free software for tools developers use every day, and give each one an interface AI agents can drive. Everything is MIT licensed and built in public.</p>
+
+  <hr>
+  <h2 id="p">Projects</h2>
+  {% for card in cards %}{% set p = card.project %}
+  <section class="project">
+    <div class="project-title">
+      <a class="project-name" href="{{ p.github_url }}">{{ p.name }}</a>
+      <span class="project-links">—{% if p.site %} <a href="{{ p.site }}">{{ p.site | replace('https://', '') | replace('http://', '') | trim('/') }}</a> ·{% endif %} <a href="{{ p.github_url }}/stargazers">{{ card.stars }} stars</a></span>
+    </div>
+    <p class="tagline">{{ p.tagline_html | safe }}</p>
+    {% if p.badges %}
+    <div class="badges">
+      {% for badge in p.badges %}<span class="badge {{ 'solid' if badge.solid else 'outline' }}">{{ badge.label }}</span>{% endfor %}
+    </div>
+    {% endif %}
+    <div class="project-body">{{ p.body_html | safe }}</div>
+    {% if card.versions %}
+    <div class="scroll-x">
+      <table class="releases">
+        <tr>{% for label, _ in card.versions %}<th>{{ label }}</th>{% endfor %}</tr>
+        <tr>{% for _, version in card.versions %}<td>{{ version }}</td>{% endfor %}</tr>
+      </table>
+    </div>
+    {% endif %}
+  </section>
+  {% endfor %}
+
+  <hr>
+  <h2 id="a" class="tight">What's new</h2>
+  <div class="status">{{ status }}</div>
+  <ul class="activity">
+    {% for e in events %}
+    <li><a href="{{ e.url }}">{{ e.what }}</a>{% if e.meta %} <span class="meta">{{ e.meta }}</span>{% endif %}</li>
+    {% endfor %}
+  </ul>
+
+  <hr>
+  <h2 id="t">People</h2>
+  <div class="people-intro">{{ people.intro_html | safe }}</div>
+  <div class="people">
+    {% for m in people.maintainers %}
+    <div class="person">
+      <img src="https://github.com/{{ m.github }}.png?size=96" alt="" width="48" height="48">
+      <span class="person-text"><a href="https://github.com/{{ m.github }}">{{ m.name }}</a><br><span class="meta">{{ m.role }} · <tt>@{{ m.github }}</tt></span></span>
+    </div>
+    {% endfor %}
+  </div>
+
+  <hr>
+  <h2 id="s" class="support-title">Support us</h2>
+  <p class="support-text">Sponsoring {{ org }} pays for maintainer time, servers and security audits. The software stays free either way.</p>
+  <div class="actions">
+    <a class="bevel" href="{{ sponsor_url }}">Become a sponsor</a>
+  </div>
+
+  <hr class="last">
+  <address>{{ org }} · <a href="{{ org_url }}">github.com/{{ org }}</a> · Last modified {{ last_modified }} · Written by hand in plain HTML</address>
+</main>
+<script src="{{ url_for('static', filename='site.js') }}"></script>
+</body>
+</html>
