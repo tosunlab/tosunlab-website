@@ -1,0 +1,9 @@
+services:
+  website:
+    image: ghcr.io/tosunlab/tosunlab-website:1.0.0
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Optional. Raises the GitHub API limit from 60 to 5000 requests an hour.
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
